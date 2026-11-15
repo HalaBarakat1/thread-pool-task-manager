@@ -1,3 +1,23 @@
+## Thread Pool Assignment (Parallel Computing)
+
+This repository is based on [wagnerjfr/web-http-socket-server-task-manager-docker](https://github.com/wagnerjfr/web-http-socket-server-task-manager-docker), extended for the Thread Pool assignment. The full report is in [`report/Thread-Pool-Report.pdf`](report/Thread-Pool-Report.pdf).
+
+| Request | Changes |
+|---|---|
+| 1. Run and explore | No code changes |
+| 2. New task | `src/task/TaskPrimeCount.java`: counts the primes in a range (`TaskPrimeCount&1,1000000` → `78498`) |
+| 3. Concurrency test | `TaskExecutor.java`: START/END logs with time and thread name. `TasksList.java`: thread-safe list. `WebServerSocket.java`: choose the pool type (`java WebServerSocket` → cached, `java WebServerSocket 2` → fixed(2)). `test-concurrency.ps1`: sends 6 requests at the same time |
+| 4. Docker | `Dockerfile`: base image `eclipse-temurin:8-jdk-alpine` and a `POOL_SIZE` environment variable |
+
+```bash
+docker build -t task-manager .
+docker run -d -p 8080:8000 --name task-manager task-manager
+docker run -d -p 8081:8000 -e POOL_SIZE=2 --name task-manager-fixed task-manager
+curl --http0.9 -X POST -d "TaskPrimeCount&1,1000000" http://localhost:8080
+```
+
+---
+
 # Multi-threaded WebServers tasks executor using WebHttpServer and WebServerSocket
 
 This project aims to create two kinds of multi-threaded web servers (with thread-pooling) for executing simple tasks.
