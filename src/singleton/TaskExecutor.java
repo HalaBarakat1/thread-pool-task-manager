@@ -3,6 +3,8 @@ package singleton;
 import task.*;
 
 import java.text.DecimalFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,14 +30,28 @@ public enum TaskExecutor {
         }
         Task task = createTask(taskName);
         task.setInput(input);
+
+        log("START " + taskName + " (" + input + ")");
         task.execute();
 
         TasksList.INSTANCE.add(task);
         long end = System.currentTimeMillis();
         String executedTime = new DecimalFormat("#0.00").format((end - start) / 1000d) + "s";
         task.setExecutedTime(executedTime);
+        log("END   " + taskName + " (" + input + ") in " + executedTime);
 
         return task.getResult();
+    }
+
+    /**
+     * Prints a log line with the current time and the name of the thread
+     * that is running the task, e.g.:
+     * [12:30:05.123] [pool-1-thread-2] START TaskPrimeCount (1,5000000)
+     */
+    private void log(String message) {
+        String time = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss.SSS"));
+        String thread = Thread.currentThread().getName();
+        System.out.println("[" + time + "] [" + thread + "] " + message);
     }
 
     private Task createTask(String className) {

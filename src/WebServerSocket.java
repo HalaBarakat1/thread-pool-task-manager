@@ -21,8 +21,17 @@ public class WebServerSocket {
 
             System.out.println("WebServerSocket is listening on port " + PORT);
 
-            //executorService = Executors.newFixedThreadPool(1);
-            executorService = Executors.newCachedThreadPool();
+            // Choose the thread pool type:
+            //   java WebServerSocket    -> newCachedThreadPool (threads created as needed)
+            //   java WebServerSocket 2  -> newFixedThreadPool(2) (2 threads + waiting queue)
+            if (args.length > 0) {
+                int poolSize = Integer.parseInt(args[0]);
+                executorService = Executors.newFixedThreadPool(poolSize);
+                System.out.println("Thread pool: newFixedThreadPool(" + poolSize + ")");
+            } else {
+                executorService = Executors.newCachedThreadPool();
+                System.out.println("Thread pool: newCachedThreadPool()");
+            }
 
             while (running) {
                 RequestsHandlerSocket handler = new RequestsHandlerSocket(serverSocket.accept());

@@ -38,7 +38,6 @@ public class RequestsHandlerSocket implements Runnable {
                 break;
             case "POST":
                 String params = getParameters(br);
-                System.out.println("New task requested -> " + params);
                 response = TaskExecutor.INSTANCE.run(params);
                 break;
         }
